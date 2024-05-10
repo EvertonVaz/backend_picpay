@@ -9,7 +9,7 @@ class UserBase(BaseModel):
     full_name: str = Field(max_length=255, title="Nome completo do usuário")
     email: EmailStr = Field(title="Endereço de e-mail do usuário")
     password: str = Field(min_length=8, title="Senha do usuário")
-    user_type: str = Field(in_=["comum", "lojista"], title="Tipo de usuário (comum ou lojista)")
+    user_type: str = Field(title="Tipo de usuário (comum ou lojista)", json_schema_extra={'enum': ["comum", "lojista"]})
     balance: float = 0.0  # Valor inicial do saldo
 
     class Config:
@@ -27,7 +27,7 @@ class Transactions(BaseModel):
     payer: int = Field(title="ID do usuário pagador")
     payee: int = Field(title="ID do usuário recebedor")
     created_at: datetime = Field(default=datetime.now, title="Data e hora da transação")
-    status: str = Field(default="pendente", in_=["pendente", "confirmada", "cancelada", "revertida"], title="Status da transação")
+    status: str = Field(default="pendente", json_schema_extra={'enum': ["pendente", "confirmada", "cancelada", "revertida"]}, title="Status da transação")
 
     class Config:
         from_attributes = True

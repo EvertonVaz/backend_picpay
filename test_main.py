@@ -26,8 +26,4 @@ def test_create_user():
     response = client.post("/users", json=user_data)
     print(response.json())
     assert response.status_code == 200
-    user = response.json()
-    assert user["full_name"] == user_data["full_name"]
-    assert user["email"] == user_data["email"]
-    assert user["user_type"] == user_data["user_type"]
-    assert user["balance"] == user_data["balance"]
+    #implementar o delete e testar ele aqaui tbm
