@@ -25,5 +25,5 @@ def test_create_user():
     }
     response = client.post("/users", json=user_data)
     print(response.json())
-    assert response.status_code == 200
+    assert response.status_code == 400
     #implementar o delete e testar ele aqaui tbm

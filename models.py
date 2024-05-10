@@ -11,9 +11,7 @@ class UserBase(BaseModel):
     password: str = Field(min_length=8, title="Senha do usuário")
     user_type: str = Field(title="Tipo de usuário (comum ou lojista)", json_schema_extra={'enum': ["comum", "lojista"]})
     balance: float = 0.0  # Valor inicial do saldo
-
-    class Config:
-        from_attributes = True
+    dict(from_attributes = True)
 
 class CommonUser(UserBase):
     document: str = Field(max_length=11, min_length=11, pattern=r"\d{11}", title="CPF do usuário")
@@ -28,9 +26,7 @@ class Transactions(BaseModel):
     payee: int = Field(title="ID do usuário recebedor")
     created_at: datetime = Field(default=datetime.now, title="Data e hora da transação")
     status: str = Field(default="pendente", json_schema_extra={'enum': ["pendente", "confirmada", "cancelada", "revertida"]}, title="Status da transação")
-
-    class Config:
-        from_attributes = True
+    dict(from_attributes = True)
 
 Users = CommonUser | ShopUser
 
