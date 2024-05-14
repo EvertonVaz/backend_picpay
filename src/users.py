@@ -50,7 +50,7 @@ async def create_user(user: Users):
 
 @user_router.post("/users/{id}")
 async def delete_user(id: int):
-    if not get_user_by_id(id):
+    if not await get_user_by_id(id):
         raise HTTPException(status_code=404, detail="Usuário não encontrado")
     conn = next(get_db_connection())
     cursor = conn.cursor()

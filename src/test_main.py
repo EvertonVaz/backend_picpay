@@ -1,6 +1,5 @@
-import pytest
+
 from main import app
-# from models import Users, Transactions, save_transaction, save_user
 from fastapi.testclient import TestClient
 
 client = TestClient(app)
@@ -18,7 +17,6 @@ def test_list_transfers():
     assert isinstance(response.json(), list)
 
 
-#TODO: estudar e aplicar mocks
 def test_create_user():
     user_data = {
         "full_name": "Test1 User",
@@ -50,7 +48,7 @@ def test_create_transfer():
     assert response.json() == {"message": "Transferência realizada com sucesso"}
 
 def test_create_deposit():
-    response = client.post("/deposit?id=1&value=1")
+    response = client.post("/deposit?id=1&value=1000")
     print(response)
     assert response.status_code == 200
     assert response.json() == {"message": "Depósito realizado com sucesso"}
@@ -61,11 +59,11 @@ def test_get_user():
     assert response.status_code == 200
     user_test = {
         "id": 1,
-        "full_name": "Test1 User",
-        "email": "testuser1@example.com",
-        "password": "9f735e0df9a1ddc702bf0a1a7b83033f9f7153a00c29de82cedadc9957289b05",
+        "full_name": "string",
+        "email": "user@example.com",
+        "password": "38ce7d24f32e00348c635b52797b618aa23c46865f38755b9a3124a3a8c57e1f",
         "user_type": "comum",
-        "document": "74384734108",
+        "document": "34710107018",
         "balance": response.json()["balance"]
     }
     assert response.json() == user_test
@@ -111,8 +109,8 @@ def test_transfer_insufficient_balance():
 
 def test_transfer_unauthorized():
     transfer_data = {
-        "value": 2000,
-        "payer": 2,
+        "value": 1001,
+        "payer": 1,
         "payee": 3
     }
     response = client.post("/transfer", json=transfer_data)
