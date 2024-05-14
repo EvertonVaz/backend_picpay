@@ -9,6 +9,8 @@ transfers_router = APIRouter()
 
 # TODO: estudar e aplicar mocks
 async def simulate_external_authorization(value):
+    if (value > 1000):
+        return {"approved": False}
     return {"approved": True}
 
 async def send_notification(email: str, value: float, message: str):
@@ -79,3 +81,4 @@ async def deposit(id: int, value: float):
     transaction = Transactions(payer=id, payee=id, value=value, status="confirmed", date=datetime.now())
     await save_transaction(transaction)
     return JSONResponse({"message": "Depósito realizado com sucesso"})
+

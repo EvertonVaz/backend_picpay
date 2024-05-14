@@ -12,15 +12,18 @@ async def list_users():
     cursor.execute("SELECT * FROM users")
     return cursor.fetchall()
 
+def check_commom_user(user: Users):
+    if user["user_type"] == "comum":
+        return user
+    else:
+        raise HTTPException(status_code=400, detail="Lojista não pode realizar pagamentos")
+
 async def get_user_by_id(id, type = None):
     users = next(get_db_connection()).cursor().execute("SELECT * FROM users").fetchall()
     for user in users:
         if id == user["id"]:
             if type:
-                if user["user_type"] == "comum":
-                    return user
-                else:
-                    raise HTTPException(status_code=400, detail="Lojista não pode realizar pagamentos")
+                return check_commom_user(user)
             else:
                 return user
     return None
@@ -47,6 +50,8 @@ async def create_user(user: Users):
 
 @user_router.post("/users/{id}")
 async def delete_user(id: int):
+    if not get_user_by_id(id):
+        raise HTTPException(status_code=404, detail="Usuário não encontrado")
     conn = next(get_db_connection())
     cursor = conn.cursor()
     cursor.execute("DELETE FROM users WHERE id = ?", (id,))
