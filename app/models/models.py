@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr, Field
 from datetime import datetime
-from database import get_db_connection, create_transaction_table, create_user_table
+from app.dependencies.database import get_db_connection, create_transaction_table, create_user_table
 from hashlib import sha256
 
 
@@ -10,7 +10,7 @@ class UserBase(BaseModel):
     email: EmailStr = Field(title="Endereço de e-mail do usuário")
     password: str = Field(min_length=8, title="Senha do usuário")
     user_type: str = Field(title="Tipo de usuário (comum ou lojista)", json_schema_extra={'enum': ["comum", "lojista"]})
-    balance: float = 0.0  # Valor inicial do saldo
+    balance: float = Field(default=0.0, title="Saldo do usuário")
     dict(from_attributes = True)
 
 class CommonUser(UserBase):

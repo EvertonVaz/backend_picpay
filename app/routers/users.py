@@ -1,7 +1,7 @@
-from fastapi import FastAPI, APIRouter, HTTPException, Request
+from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse
-from database import get_db_connection
-from models import Users, save_user
+from app.dependencies.database import get_db_connection
+from app.models.models import Users, save_user
 
 user_router = APIRouter()
 
