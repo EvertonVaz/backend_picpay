@@ -25,7 +25,7 @@ class Transactions(BaseModel):
     payer: int = Field(title="ID do usuário pagador")
     payee: int = Field(title="ID do usuário recebedor")
     created_at: datetime = Field(default=datetime.now, title="Data e hora da transação")
-    status: str = Field(default="pendente", json_schema_extra={'enum': ["pendente", "confirmada", "cancelada", "revertida"]}, title="Status da transação")
+    status: str = Field(default="pendente", json_schema_extra={'enum': ["pendente", "confirmada", "revertida"]}, title="Status da transação")
     dict(from_attributes = True)
 
 Users = CommonUser | ShopUser
