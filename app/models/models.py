@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr, Field
 from datetime import datetime
-from app.dependencies.database import get_db_connection, create_transaction_table, create_user_table
+from app.dependencies.database import conn
 from hashlib import sha256
 
 
@@ -19,20 +19,23 @@ class CommonUser(UserBase):
 class ShopUser(UserBase):
     document: str = Field(max_length=14, min_length=14, pattern=r"\d{14}", title="CNPJ do usuário")
 
+Users = CommonUser | ShopUser
+
 class Transactions(BaseModel):
     id: int = Field(default=0, title="ID da transação")
     value: float = Field(gt=0, title="Valor da transação")
     payer: int = Field(title="ID do usuário pagador")
     payee: int = Field(title="ID do usuário recebedor")
     created_at: datetime = Field(default=datetime.now, title="Data e hora da transação")
-    status: str = Field(default="pendente", json_schema_extra={'enum': ["pendente", "confirmada", "revertida"]}, title="Status da transação")
+    status: str = Field(
+        default="pendente",
+        json_schema_extra={'enum': ["pendente", "confirmada", "revertida"]},
+        title="Status da transação"
+        )
     dict(from_attributes = True)
 
-Users = CommonUser | ShopUser
 
 async def save_user(user: Users):
-    conn = next(get_db_connection())
-    create_user_table()
     cursor = conn.cursor()
     # Inserção do novo usuário na tabela
     cursor.execute(
@@ -70,8 +73,6 @@ async def save_user(user: Users):
 
 
 async def save_transaction(transaction: Transactions):
-    conn = next(get_db_connection())
-    create_transaction_table()
     cursor = conn.cursor()
     cursor.execute(
         """

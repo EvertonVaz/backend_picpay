@@ -4,6 +4,7 @@ import random
 
 client = TestClient(app)
 
+
 def test_list_users():
     response = client.get("/")
     assert response.status_code == 200

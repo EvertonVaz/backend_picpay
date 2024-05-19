@@ -1,5 +1,3 @@
-# tests/test_deposit.py
-
 from fastapi.testclient import TestClient
 from app.main import app
 

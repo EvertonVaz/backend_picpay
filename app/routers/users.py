@@ -1,13 +1,13 @@
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse
-from app.dependencies.database import get_db_connection
+from app.dependencies.database import conn
 from app.models.models import Users, save_user
+
 
 user_router = APIRouter()
 
 @user_router.get("/")
 async def list_users():
-    conn = next(get_db_connection())
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM users")
     return cursor.fetchall()
@@ -19,7 +19,7 @@ def check_commom_user(user: Users):
         raise HTTPException(status_code=400, detail="Lojista não pode realizar pagamentos")
 
 async def get_user_by_id(id, type = None):
-    users = next(get_db_connection()).cursor().execute("SELECT * FROM users").fetchall()
+    users = conn.cursor().execute("SELECT * FROM users").fetchall()
     for user in users:
         if id == user["id"]:
             if type:
@@ -48,11 +48,11 @@ async def create_user(user: Users):
     await save_user(user)
     return JSONResponse({"message": "Usuário criado com sucesso"})
 
-@user_router.post("/users/{id}")
+@user_router.delete("/users/{id}")
 async def delete_user(id: int):
     if not await get_user_by_id(id):
         raise HTTPException(status_code=404, detail="Usuário não encontrado")
-    conn = next(get_db_connection())
+    conn = conn
     cursor = conn.cursor()
     cursor.execute("DELETE FROM users WHERE id = ?", (id,))
     conn.commit()

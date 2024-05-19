@@ -5,8 +5,9 @@ def get_db_connection():
 		conn.row_factory = sqlite3.Row
 		yield conn
 
+conn = next(get_db_connection())
+
 def create_user_table():
-	conn = next(get_db_connection())
 	if conn is None:
 		return
 	cursor = conn.cursor()
@@ -26,7 +27,6 @@ def create_user_table():
 	conn.commit()
 
 def create_transaction_table():
-	conn = next(get_db_connection())
 	if conn is None:
 		return
 	cursor = conn.cursor()
