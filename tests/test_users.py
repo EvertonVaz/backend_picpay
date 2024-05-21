@@ -25,7 +25,7 @@ def test_create_user():
     assert response.json() == {"message": "Usuário criado com sucesso"}
 
 def test_delete_user():
-    response = client.post("/users/5")
+    response = client.delete("/users/5")
     print(response)
     assert response.status_code == 200
     assert response.json() == {"message": "Usuário deletado com sucesso"}

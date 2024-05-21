@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse
-from app.dependencies.database import conn
+from app.dependencies.database import get_db_connection
 from app.models.models import Transactions, save_transaction
 from app.routers.users import get_user_by_id, Users
 from datetime import datetime
@@ -11,13 +11,14 @@ transfers_router = APIRouter()
 
 @transfers_router.get("/list_transfer")
 async def list_transfers():
+    conn = next(get_db_connection())
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM transactions")
     return cursor.fetchall()
 
 # TODO: estudar e aplicar mocks
 async def simulate_external_authorization(transaction: Transactions):
-    sleep(0.5)
+    sleep(1)
     if (randint(0, 9) > 8):
         return {"approved": False}
     return {"approved": True}
@@ -26,6 +27,7 @@ async def send_notification(email: str, value: float, message: str):
     print(f"Enviando notificação para {email}: {message} - Valor: R$ {value}")
 
 async def update_user_balance(id: int, new_balance: float):
+    conn = next(get_db_connection())
     cursor = conn.cursor()
     cursor.execute("UPDATE users SET balance = ? WHERE id = ?", (new_balance, id))
     conn.commit()
@@ -42,7 +44,7 @@ async def make_transfer(payer: Users, payee: Users, transaction: Transactions, a
 
 @transfers_router.post("/transfer")
 async def transfer(transaction: Transactions):
-    trans = conn.cursor().execute("SELECT * FROM transactions").fetchall()
+    trans = next(get_db_connection()).cursor().execute("SELECT * FROM transactions").fetchall()
     transaction.id = len(trans) + 1
     if transaction.value <= 0:
         raise HTTPException(status_code=400, detail="O valor da transferência deve ser positivo")

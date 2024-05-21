@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr, Field
 from datetime import datetime
-from app.dependencies.database import conn
+from app.dependencies.database import get_db_connection, create_transaction_table, create_user_table
 from hashlib import sha256
 
 
@@ -34,8 +34,9 @@ class Transactions(BaseModel):
         )
     dict(from_attributes = True)
 
-
 async def save_user(user: Users):
+    conn = next(get_db_connection())
+    create_user_table()
     cursor = conn.cursor()
     # Inserção do novo usuário na tabela
     cursor.execute(
@@ -73,6 +74,8 @@ async def save_user(user: Users):
 
 
 async def save_transaction(transaction: Transactions):
+    conn = next(get_db_connection())
+    create_transaction_table()
     cursor = conn.cursor()
     cursor.execute(
         """
